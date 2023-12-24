@@ -217,4 +217,39 @@ class UserTest extends TestCase
 
         self::assertNotEquals($oldUser->name, $newUser->name);
     }
+
+    public function testLogoutSuccess()
+    {
+        $this->seed([UserSeeder::class]);
+
+        $this->delete(uri: '/api/users/logout', headers: 
+        [
+            'Authorization' => 'test'
+        ])
+        ->assertStatus(200)
+        ->assertJson([
+            'data' => true
+        ]);
+
+        $user = User::where('username', 'test')->first();
+        self::assertNull($user->token);
+    }
+
+    public function testLogoutFailed()
+    {
+        $this->seed([UserSeeder::class]);
+
+        $this->delete(uri: '/api/users/logout', headers: 
+        [
+            'Authorization' => 'wrong token'
+        ])
+        ->assertStatus(401)
+        ->assertJson([
+            'errors' => [
+                'message' => [
+                    'unauthorized'
+                ]
+            ]
+        ]);
+    }
 }
