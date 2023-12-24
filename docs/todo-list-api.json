@@ -117,6 +117,9 @@
                                 "schema": {
                                     "type": "object",
                                     "properties": {
+                                        "meta": {
+                                            "type": "object"
+                                        },
                                         "data": {
                                             "type": "array",
                                             "items": {
@@ -443,6 +446,9 @@
                                 "schema": {
                                     "type": "object",
                                     "properties": {
+                                        "meta": {
+                                            "type": "object"
+                                        },
                                         "data": {
                                             "type": "array",
                                             "items": {
