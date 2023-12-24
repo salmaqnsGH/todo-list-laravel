@@ -27,7 +27,8 @@ Route::post('/users/login', [UserController::class, 'login']);
 Route::middleware(ApiAuthMiddleware::class)->group(function(){
     Route::get('/users/current', [UserController::class, 'get']);
     Route::patch('/users/current', [UserController::class, 'update']);
-    Route::Delete('/users/logout', [UserController::class, 'logout']);
+    Route::delete('/users/logout', [UserController::class, 'logout']);
 
-    Route::Post('/activities', [ActivityController::class, 'create']);
+    Route::post('/activities', [ActivityController::class, 'create']);
+    Route::get('/activities/{id}', [ActivityController::class, 'get'])->where('id','[0-9]+');
 });
