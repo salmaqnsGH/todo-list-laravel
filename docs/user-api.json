@@ -191,8 +191,13 @@
                 "description": "Get current user",
                 "parameters": [
                     {
+                        "description": "The authorization token",
+                        "required": true,
                         "name": "Authorization",
-                        "in": "header"
+                        "in": "header",
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -231,8 +236,13 @@
                 "description": "Update current user",
                 "parameters": [
                     {
+                        "description": "The authorization token",
+                        "required": true,
                         "name": "Authorization",
-                        "in": "header"
+                        "in": "header",
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "requestBody":{
@@ -291,8 +301,13 @@
                 "description": "Logout current user",
                 "parameters": [
                     {
+                        "description": "The authorization token",
+                        "required": true,
                         "name": "Authorization",
-                        "in": "header"
+                        "in": "header",
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
