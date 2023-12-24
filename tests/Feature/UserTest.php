@@ -16,13 +16,14 @@ class UserTest extends TestCase
             'username' => 'salmamail',
             'password' => 'password',
             'name' => 'salma'
-        ])->assertStatus(201)
-            ->assertJson([
-                'data' => [
-                    'username' => 'salmamail',
-                    'name' => 'salma'
-                ]
-                ]);
+        ])
+        ->assertStatus(201)
+        ->assertJson([
+            'data' => [
+                'username' => 'salmamail',
+                'name' => 'salma'
+            ]
+        ]);
     }
 
     public function testRegisterFailed()
@@ -31,20 +32,21 @@ class UserTest extends TestCase
             'username' => '',
             'password' => '',
             'name' => ''
-        ])->assertStatus(400)
-            ->assertJson([
-                'errors' => [
-                    'username' => [
-                        'The username field is required.'
-                    ],
-                    'password' => [
-                        'The password field is required.'
-                    ],
-                    'name' => [
-                        'The name field is required.'
-                    ]
+        ])
+        ->assertStatus(400)
+        ->assertJson([
+            'errors' => [
+                'username' => [
+                    'The username field is required.'
+                ],
+                'password' => [
+                    'The password field is required.'
+                ],
+                'name' => [
+                    'The name field is required.'
                 ]
-                ]);
+            ]
+        ]);
     }
 
     public function testRegisterUsernameAlreadyExists()
@@ -54,14 +56,15 @@ class UserTest extends TestCase
             'username' => 'salmamail',
             'password' => 'password',
             'name' => 'salma'
-        ])->assertStatus(400)
-            ->assertJson([
-                'errors' => [
-                    'username' => [
-                        'username already registered'
-                    ]
+        ])
+        ->assertStatus(400)
+        ->assertJson([
+            'errors' => [
+                'username' => [
+                    'username already registered'
                 ]
-                ]);
+            ]
+        ]);
     }
 
     public function testLoginSuccess()
@@ -70,13 +73,14 @@ class UserTest extends TestCase
         $this->post('/api/users/login', [
             'username' => 'test',
             'password' => 'test'
-        ])->assertStatus(200)
-            ->assertJson([
-                'data' => [
-                    'username' => 'test',
-                    'name' => 'test'
-                ]
-                ]);
+        ])
+        ->assertStatus(200)
+        ->assertJson([
+            'data' => [
+                'username' => 'test',
+                'name' => 'test'
+            ]
+        ]);
 
         $user = User::where('username', 'test')->first();
 
@@ -88,14 +92,15 @@ class UserTest extends TestCase
         $this->post('/api/users/login', [
             'username' => 'test',
             'password' => 'test'
-        ])->assertStatus(401)
-            ->assertJson([
-                'errors' => [
-                    'message' => [
-                        'invalid username/password'
-                    ]
+        ])
+        ->assertStatus(401)
+        ->assertJson([
+            'errors' => [
+                'message' => [
+                    'invalid username/password'
                 ]
-                ]);
+            ]
+        ]);
     }
 
     public function testLoginWrongPassword()
@@ -104,13 +109,62 @@ class UserTest extends TestCase
         $this->post('/api/users/login', [
             'username' => 'test',
             'password' => 'test123'
-        ])->assertStatus(401)
-            ->assertJson([
-                'errors' => [
-                    'message' => [
-                        'invalid username/password'
-                    ]
+        ])
+        ->assertStatus(401)
+        ->assertJson([
+            'errors' => [
+                'message' => [
+                    'invalid username/password'
                 ]
-                ]);
+            ]
+        ]);
     }
+
+    public function testGetSuccess()
+    {
+        $this->seed([UserSeeder::class]);
+
+        $this->get('/api/users/current', [
+            'Authorization' => 'test'
+        ])
+        ->assertStatus(200)
+        ->assertJson([
+            'data' => [
+                'username' => 'test',
+                'name' => 'test'
+            ]
+        ]);
+    }
+
+    public function testGetUnauthorized()
+    {
+        $this->seed([UserSeeder::class]);
+
+        $this->get('/api/users/current')
+        ->assertStatus(401)
+        ->assertJson([
+            'errors' => [
+                'message' => [
+                    'unauthorized'
+                ]
+            ]
+        ]);
+    } 
+
+    public function testGetInvalidToken()
+    {
+        $this->seed([UserSeeder::class]);
+
+        $this->get('/api/users/current', [
+            'Authorization' => 'test123'
+        ])
+        ->assertStatus(401)
+        ->assertJson([
+            'errors' => [
+                'message' => [
+                    'unauthorized'
+                ]
+            ]
+        ]);
+    } 
 }
