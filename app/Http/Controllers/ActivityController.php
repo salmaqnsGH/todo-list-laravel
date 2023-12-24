@@ -65,4 +65,26 @@ class ActivityController extends Controller
 
         return new ActivityResource($activity);
     }
+
+    public function delete(int $id): JsonResponse
+    {
+        $user = Auth::user();
+
+        $activity = Activity::where('id', $id)->where('user_id', $user->id)->first();
+        if(!$activity){
+            throw new HttpResponseException(response()->json([
+                'errors' => [
+                    'message' => [
+                        'not found'
+                    ]
+                ]
+            ])->setStatusCode(404));
+        }
+
+        $activity->delete();
+
+        return response()->json([
+            'data' => true
+        ])->setStatusCode(200);
+    }
 }
