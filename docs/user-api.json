@@ -312,7 +312,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Success get current user",
+                        "description": "Success logout",
                         "content": {
                             "application/json": {
                                 "schema": {
