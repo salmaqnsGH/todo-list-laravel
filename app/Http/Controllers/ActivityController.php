@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ActivityCreateRequest;
+use App\Http\Requests\ActivityUpdateRequest;
 use App\Http\Resources\ActivityResource;
 use App\Models\Activity;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -39,6 +40,28 @@ class ActivityController extends Controller
                 ]
             ])->setStatusCode(404));
         }
+
+        return new ActivityResource($activity);
+    }
+
+    public function update(int $id, ActivityUpdateRequest $request): ActivityResource
+    {
+        $user = Auth::user();
+
+        $activity = Activity::where('id', $id)->where('user_id', $user->id)->first();
+        if(!$activity){
+            throw new HttpResponseException(response()->json([
+                'errors' => [
+                    'message' => [
+                        'not found'
+                    ]
+                ]
+            ])->setStatusCode(404));
+        }
+
+        $data = $request->validated();
+        $activity->fill($data);
+        $activity->save();
 
         return new ActivityResource($activity);
     }

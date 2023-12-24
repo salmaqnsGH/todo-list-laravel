@@ -87,4 +87,48 @@ class ActivityTest extends TestCase
             ]
         ]);
     }
+
+    public function testUpdateSuccess()
+    {
+        $this->seed([UserSeeder::class, ActivitySeeder::class]);
+
+        $activity = Activity::query()->limit(1)->first();
+
+        $this->put("/api/activities/". $activity->id, 
+        [
+            'title' => 'test2'
+        ],
+        [
+            'Authorization' => 'test'
+        ])
+        ->assertStatus(200)
+        ->assertJson([
+            'data' => [
+                'title' => 'test2'
+            ]
+        ]);
+    }
+
+    public function testUpdateValidationError()
+    {
+        $this->seed([UserSeeder::class, ActivitySeeder::class]);
+
+        $activity = Activity::query()->limit(1)->first();
+
+        $this->put("/api/activities/". $activity->id, 
+        [
+            'title' => ''
+        ],
+        [
+            'Authorization' => 'test'
+        ])
+        ->assertStatus(400)
+        ->assertJson([
+            'errors' => [
+                'title' => [
+                    'The title field is required.'
+                ]
+            ]
+        ]);
+    }
 }
