@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ActivityCreateRequest;
 use App\Http\Requests\ActivityUpdateRequest;
+use App\Http\Resources\ActivityCollection;
 use App\Http\Resources\ActivityResource;
 use App\Models\Activity;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -86,5 +87,18 @@ class ActivityController extends Controller
         return response()->json([
             'data' => true
         ])->setStatusCode(200);
+    }
+
+    public function getList(Request $request): ActivityCollection
+    {
+        $user = Auth::user();
+
+        $page = $request->input('page', 1);
+        $size = $request->input('size', 10);
+
+        $activities = Activity::query()->where('user_id', $user->id);
+        $activities = $activities->paginate(perPage: $size, page: $page);
+
+        return new ActivityCollection($activities);
     }
 }

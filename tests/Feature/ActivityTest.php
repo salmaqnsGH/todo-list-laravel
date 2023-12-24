@@ -4,11 +4,12 @@ namespace Tests\Feature;
 
 use App\Models\Activity;
 use Database\Seeders\ActivitySeeder;
+use Database\Seeders\ListSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use Database\Seeders\UserSeeder;
-
+use Illuminate\Support\Facades\Log;
 
 class ActivityTest extends TestCase
 {
@@ -166,5 +167,55 @@ class ActivityTest extends TestCase
                 ]
             ]
         ]);
+    }
+
+    public function testGetListSuccess()
+    {
+        $this->seed([UserSeeder::class, ListSeeder::class]);
+
+        $response = $this->get("/api/activities",
+        [
+            'Authorization' => 'test'
+        ])
+        ->assertStatus(200)
+        ->json();
+
+        Log::info(json_encode($response, JSON_PRETTY_PRINT));
+
+        self::assertEquals(10, count($response['data']));
+    }
+
+    public function testGetListNotFound()
+    {
+        $this->seed([UserSeeder::class]);
+
+        $response = $this->get("/api/activities",
+        [
+            'Authorization' => 'test'
+        ])
+        ->assertStatus(200)
+        ->json();
+
+        Log::info(json_encode($response, JSON_PRETTY_PRINT));
+
+        self::assertEquals(0, count($response['data']));
+    }
+
+    public function testGetListPage()
+    {
+        $this->seed([UserSeeder::class, ListSeeder::class]);
+
+        $response = $this->get("/api/activities?size=5&page=2",
+        [
+            'Authorization' => 'test'
+        ])
+        ->assertStatus(200)
+        ->json();
+
+        Log::info(json_encode($response, JSON_PRETTY_PRINT));
+
+        self::assertEquals(5, count($response['data']));
+        self::assertEquals(10, $response['meta']['total']);
+        self::assertEquals(2, $response['meta']['current_page']);
     }
 }
