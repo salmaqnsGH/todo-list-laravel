@@ -12,8 +12,13 @@ class Activity extends Model
     protected $table = "activities";
     protected $primaryKey = "id";
     protected $keyType = "int";
-    protected $timestamps = true;
-    protected $incrementing = true;
+    public $timestamps = true;
+    public $incrementing = true;
+
+    protected $fillable = [
+        'title',
+    ];
+
 
     public function user(): BelongsTo {
         return $this->belongsTo(User::class, "user_id", "id");
