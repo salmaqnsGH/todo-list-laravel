@@ -71,14 +71,28 @@ class TodoController extends Controller
         return new TodoResource($todo);
     }
 
-    public function update(int $todoID, TodoUpdateRequest $request): JsonResponse
+    public function update(int $activityID, int $todoID, TodoUpdateRequest $request): TodoResource
     {
-        $data = $request->validated();
+        $todo = $this->getTodo($todoID);
+        $activity = $this->getActivity($activityID);
 
-        $todo = new Todo($data);
+        $data = $request->validated();
+        
+        $todo->activity_id = $activity->id;
+
         $todo->fill($data);
         $todo->save();
 
-        return (new TodoResource($todo))->response()->setStatusCode(200);
+        return new TodoResource($todo);
+    }
+
+    public function delete(int $todoID): JsonResponse
+    {
+        $todo = $this->getTodo($todoID);
+        $todo->delete();
+
+        return response()->json([
+            'data' => true
+        ])->setStatusCode(200);
     }
 }

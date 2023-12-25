@@ -39,5 +39,6 @@ Route::middleware(ApiAuthMiddleware::class)->group(function(){
     
     Route::post('/activities/{activityID}/todos', [TodoController::class, 'create'])->where('activityID','[0-9]+');
     Route::get('/activities/todos/{todoID}', [TodoController::class, 'get'])->where('todoID','[0-9]+');
-    Route::put('/activities/todos/{todoID}', [TodoController::class, 'update'])->where('todoID','[0-9]+');
+    Route::put('/activities/{activityID}/todos/{todoID}', [TodoController::class, 'update'])->where('todoID','[0-9]+')->where('activityID','[0-9]+');
+    Route::delete('/activities/todos/{todoID}', [TodoController::class, 'delete'])->where('todoID','[0-9]+');
 });

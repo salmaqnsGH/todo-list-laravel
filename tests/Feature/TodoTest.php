@@ -103,17 +103,18 @@ class TodoTest extends TestCase
         ]);
     }
 
-    public function updateTodoSuccess()
+    public function testUpdateTodoSuccess()
     {
         $this->seed([UserSeeder::class, ActivitySeeder::class, TodoSeeder::class]);
 
+        $activity = Activity::query()->limit(1)->first();
         $todo = Todo::query()->limit(1)->first();
 
-        $this->put("/api/activities/todos/" . $todo->id, 
+        $this->put("/api/activities/".$activity->id."/todos/" . $todo->id, 
         [
             'title' => 'test 2',
             'priority' => 'test 2',
-            'is_active' => true
+            'is_active' => true,
         ],
         [
             'Authorization' => 'test'
@@ -128,18 +129,57 @@ class TodoTest extends TestCase
         ]);
     }
 
-    public function updateTodoNotFound()
+    public function testUpdateTodoNotFound()
     {
         $this->seed([UserSeeder::class, ActivitySeeder::class, TodoSeeder::class]);
 
+        $activity = Activity::query()->limit(1)->first();
         $todo = Todo::query()->limit(1)->first();
 
-        $this->put("/api/activities/todos/" . ($todo->id + 1), 
+        $this->put("/api/activities/".($activity->id + 1)."/todos/" .( $todo->id +1 ), 
         [
             'title' => 'test 2',
             'priority' => 'test 2',
             'is_active' => true
         ],
+        [
+            'Authorization' => 'test'
+        ])
+        ->assertStatus(404)
+        ->assertJson([
+            'errors' => [
+                'message' => [
+                    'not found'
+                ]
+            ]
+        ]);
+    }
+
+    public function testDeleteTodoSuccess()
+    {
+        $this->seed([UserSeeder::class, ActivitySeeder::class, TodoSeeder::class]);
+
+        $todo = Todo::query()->limit(1)->first();
+
+        $this->delete("/api/activities/todos/" . $todo->id, 
+        [],
+        [
+            'Authorization' => 'test'
+        ])
+        ->assertStatus(200)
+        ->assertJson([
+            'data' => true
+        ]);
+    }
+
+    public function testDeleteTodoNotFound()
+    {
+        $this->seed([UserSeeder::class, ActivitySeeder::class, TodoSeeder::class]);
+
+        $todo = Todo::query()->limit(1)->first();
+
+        $this->delete("/api/activities/todos/" . ($todo->id + 1), 
+        [],
         [
             'Authorization' => 'test'
         ])
