@@ -67,10 +67,9 @@ class TodoTest extends TestCase
     {
         $this->seed([UserSeeder::class, ActivitySeeder::class, TodoSeeder::class]);
 
-        $activity = Activity::query()->limit(1)->first();
         $todo = Todo::query()->limit(1)->first();
 
-        $this->get("/api/activities/". $activity->id . "/todos/" . $todo->id, 
+        $this->get("/api/activities/todos/" . $todo->id, 
         [
             'Authorization' => 'test'
         ])
@@ -84,14 +83,63 @@ class TodoTest extends TestCase
         ]);
     }
 
-    public function testGetTodoNotFOund()
+    public function testGetTodoNotFound()
     {
         $this->seed([UserSeeder::class, ActivitySeeder::class, TodoSeeder::class]);
 
-        $activity = Activity::query()->limit(1)->first();
         $todo = Todo::query()->limit(1)->first();
 
-        $this->get("/api/activities/". ($activity->id+1) . "/todos/" . ($todo->id+1), 
+        $this->get("/api/activities/todos/" . ($todo->id+1), 
+        [
+            'Authorization' => 'test'
+        ])
+        ->assertStatus(404)
+        ->assertJson([
+            'errors' => [
+                'message' => [
+                    'not found'
+                ]
+            ]
+        ]);
+    }
+
+    public function updateTodoSuccess()
+    {
+        $this->seed([UserSeeder::class, ActivitySeeder::class, TodoSeeder::class]);
+
+        $todo = Todo::query()->limit(1)->first();
+
+        $this->put("/api/activities/todos/" . $todo->id, 
+        [
+            'title' => 'test 2',
+            'priority' => 'test 2',
+            'is_active' => true
+        ],
+        [
+            'Authorization' => 'test'
+        ])
+        ->assertStatus(200)
+        ->assertJson([
+            'data' => [
+                'title' => 'test 2',
+                'priority' => 'test 2',
+                'is_active' => true
+            ]
+        ]);
+    }
+
+    public function updateTodoNotFound()
+    {
+        $this->seed([UserSeeder::class, ActivitySeeder::class, TodoSeeder::class]);
+
+        $todo = Todo::query()->limit(1)->first();
+
+        $this->put("/api/activities/todos/" . ($todo->id + 1), 
+        [
+            'title' => 'test 2',
+            'priority' => 'test 2',
+            'is_active' => true
+        ],
         [
             'Authorization' => 'test'
         ])
