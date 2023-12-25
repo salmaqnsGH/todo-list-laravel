@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ActivityController;
+use App\Http\Controllers\TodoController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\ApiAuthMiddleware;
 use Illuminate\Http\Request;
@@ -34,4 +35,8 @@ Route::middleware(ApiAuthMiddleware::class)->group(function(){
     Route::get('/activities/{id}', [ActivityController::class, 'get'])->where('id','[0-9]+');
     Route::put('/activities/{id}', [ActivityController::class, 'update'])->where('id','[0-9]+');
     Route::delete('/activities/{id}', [ActivityController::class, 'delete'])->where('id','[0-9]+');
+    
+    
+    Route::post('/activities/{activityID}/todos', [TodoController::class, 'create'])->where('activityID','[0-9]+');
+    Route::get('/activities/{activityID}/todos/{todoID}', [TodoController::class, 'get'])->where('activityID','[0-9]+')->where('activityID','[0-9]+');
 });

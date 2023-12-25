@@ -11,8 +11,13 @@ class Todo extends Model
     protected $table = "todos";
     protected $primaryKey = "id";
     protected $keyType = "int";
-    protected $timestamps = true;
-    protected $incrementing = true;
+    public $timestamps = true;
+    public $incrementing = true;
+
+    protected $fillable = [
+        'title', 'priority', 'is_active'
+    ];
+
 
     public function activity(): BelongsTo {
         return $this->belongsTo(Activity::class, "activity_id", "id");
