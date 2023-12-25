@@ -95,4 +95,11 @@ class TodoController extends Controller
             'data' => true
         ])->setStatusCode(200);
     }
+
+    public function listTodo(int $activityID): JsonResponse
+    {
+        $todos = Todo::where('activity_id', $activityID)->get();
+
+        return (TodoResource::collection($todos))->response()->setStatusCode(200);
+    }
 }

@@ -7,6 +7,7 @@ use App\Models\Todo;
 use Database\Seeders\ActivitySeeder;
 use Database\Seeders\TodoSeeder;
 use Database\Seeders\UserSeeder;
+use Database\Seeders\ListSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -191,5 +192,21 @@ class TodoTest extends TestCase
                 ]
             ]
         ]);
+    }
+
+    public function testGetListTodo()
+    {
+        $this->seed([UserSeeder::class, ActivitySeeder::class, ListSeeder::class]);
+
+        $activity = Activity::query()->limit(1)->first();
+
+        $response = $this->get("/api/activities/".$activity->id."/todos",
+        [
+            'Authorization' => 'test'
+        ])
+        ->assertStatus(200)
+        ->json();
+
+        self::assertEquals(10, count($response['data']));
     }
 }
